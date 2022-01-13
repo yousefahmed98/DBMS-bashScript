@@ -107,6 +107,7 @@ do
                                 ;;
                                 disconnect)
                                     disconnect=true
+                                    cd .. ;
                                     echo disconnected
                                     break
                                 ;;
@@ -128,8 +129,17 @@ do
                 read databaseName 
                 if [ -d "$databaseName" ]
                 then
-                    rm -r $databaseName
-                    echo you are connected to $databaseName
+                    read -p "Are You Sure Want to delete 1)Yes  2)No " check;
+                    case $check in
+                        1)  
+                            rm -r $databaseName
+                            echo "done"
+                        ;;
+                        2)
+                            echo Not deleted
+                        ;;
+                        
+                    esac 
                 else
                     echo database dose not exist 
                 fi
