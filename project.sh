@@ -37,14 +37,44 @@ do
                             case $choice2 in 
  
                                 createTable)
-                                    echo "Please Enter Table Name You want to create" ; 
-                                    read tableName 
-                                    if [ -f "$tableName" ]
-                                    then
-                                        echo sorry please enter onther name this exist 
+                                    echo enter table name
+                                    read Table
+                                    if [ -f $Table ]
+                                    then 
+                                        echo table already exist 
                                     else 
-                                        touch $tableName.csv
-                                        echo table created
+                                        touch .$Table;
+                                        touch $Table;
+                                        echo -n 'id' >> $Table
+                                        echo -n 'int' >> .$Table
+                                        echo "how many Columns you want ?"
+                                        typeset -i fnumber 
+                                        read fnumber
+                                        if [[ $fnumber -gt 0 ]]
+                                        then
+                                            for (( i=1; i<=$fnumber; i++ ))
+                                            do
+                                                read -p "Enter column No.$i name : " colName;
+                                                echo -n :$colName >> $Table
+                                                echo "1) string 2) int 3) boolen "
+                                                read -p "Enter column datatype :" coltype;
+                                                case $coltype in
+                                                    1)
+                                                        echo -n ':string' >> .$Table
+                                                    ;;
+                                                    2)
+                                                        echo -n ':int' >> .$Table
+                                                    ;;
+                                                    3)
+                                                        echo -n ':boolen' >> .$Table
+                                                    ;;
+                                                    *)
+                                                        echo -n "unknown"
+                                                    ;;
+                                                esac 
+                                            done
+                                        fi 
+                                        echo "$name has been created Succefully..."
                                     fi 
                                     break 
                                 ;;
