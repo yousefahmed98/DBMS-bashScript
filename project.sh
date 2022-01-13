@@ -35,7 +35,6 @@ do
                         select choice2 in "createTable" "listTable" "dropTable" "selectfromTable" "isnertIntoTable" "deleteFromTable" "disconnect"
                         do 
                             case $choice2 in 
- 
                                 createTable)
                                     echo enter table name
                                     read Table
@@ -55,21 +54,24 @@ do
                                             for (( i=1; i<=$fnumber; i++ ))
                                             do
                                                 read -p "Enter column No.$i name : " colName;
-                                                echo -n :$colName >> $Table
                                                 echo "1) string 2) int 3) boolen "
                                                 read -p "Enter column datatype :" coltype;
                                                 case $coltype in
                                                     1)
                                                         echo -n ':string' >> .$Table
+                                                        echo -n :$colName >> $Table
                                                     ;;
                                                     2)
                                                         echo -n ':int' >> .$Table
+                                                        echo -n :$colName >> $Table
                                                     ;;
                                                     3)
                                                         echo -n ':boolen' >> .$Table
+                                                        echo -n :$colName >> $Table
                                                     ;;
                                                     *)
-                                                        echo -n "unknown"
+                                                        echo "unknown datatype"
+                                                        i=$i-1
                                                     ;;
                                                 esac 
                                             done
@@ -79,7 +81,6 @@ do
                                     break 
                                 ;;
                                 listTable)
-
                                     ls $PWD
                                     break
                                 ;;
