@@ -89,10 +89,10 @@ do
                                     read tableName
                                     if [ -f "$tableName" ]
                                     then
-                                        rm $tableName
-                                        echo table deleted 
+                                        rm -i $tableName
+                                        rm .$tableName
+                                        echo $tableName deleted 
                                     else 
-                                
                                         echo "table name dosen't exit"
                                     fi 
                                     break
@@ -103,7 +103,6 @@ do
                                     awk '{
                                         print $1
                                     }' $tableName.csv
-
                                     break
                                 ;;
                                 disconnect)
