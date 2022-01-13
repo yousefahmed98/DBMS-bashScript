@@ -76,7 +76,7 @@ do
                                                 esac 
                                             done
                                         fi 
-                                        echo "$name has been created Succefully..."
+                                        echo "$Table has been created Succefully..."
                                     fi 
                                     break 
                                 ;;
