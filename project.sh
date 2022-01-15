@@ -143,6 +143,21 @@ do
                                     echo end of awk
                                     break
                                 ;;
+                                isnertIntoTable)
+                                    id=-1
+                                    echo "Please Enter table Name" ; 
+                                    read tableName
+                                    colsNum=`awk -F : 'END{print NF}' $tableName` #get the number of the cols
+                                    id=`awk -F : 'END{ print $1 }' $tableName` #get the id 
+                                    id=$(($id+1))
+                                    echo $id
+                                    row=()
+                                    for (( i=2; i<=$(($colsNum)); i++ )) do
+                                        echo enter value of $(awk 'BEGIN{FS=":"}{ if(NR==1)print $'$i';}' $tableName)
+                                        read value
+                                    done 
+
+                                ;;
                                 disconnect)
                                     disconnect=true
                                     echo disconnected
