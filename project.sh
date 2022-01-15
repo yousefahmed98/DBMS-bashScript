@@ -98,11 +98,49 @@ do
                                     break
                                 ;;
                                 selectfromTable)
-                                    echo "Please Enter DataBase Name You want to connect" ; 
+                                    echo "Please Enter table Name" ; 
                                     read tableName
-                                    awk '{
-                                        print $1
-                                    }' $tableName.csv
+                                    echo "enter coulmn name : "
+                                    read colName 
+                                    awk -v colName="$colName"  -v tableName="$tableName" -F : '
+                                        BEGIN {
+                                            print "************************************"
+                                            print "select", colName ,"from" , tableName 
+                                            dataF=-1;  
+                                        } 
+                                        {
+                                            if(colName=="*"){
+                                                print $0     
+                                            }
+                                            else{
+                                                if(NR==1){
+                                                    i=1; 
+                                                    while(i<=NF) {
+                                                        if(colName==$i){
+                                                            print $i;
+                                                            dataF=i;
+                                                            break;
+                                                        }
+                                                        i++
+                                                    } 
+                                                }
+                                                else{
+                                                    
+                                                    i=1; 
+                                                    while(i<=NF) {
+                                                        if(dataF==i){
+                                                            print $i ; 
+                                                        }
+                                                        i++
+                                                    } 
+                                                }
+                                            } 
+                                        } 
+                                        END {
+                                                print "************************************"
+                                            }
+                                    ' $tableName
+                                    echo end of awk
                                     break
                                 ;;
                                 disconnect)
