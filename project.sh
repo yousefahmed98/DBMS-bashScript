@@ -98,56 +98,42 @@ do
                                     break
                                 ;;
                                 selectfromTable)
-                                    echo "Please Enter table Name" ; 
+                                    echo "Please Enter DataBase Name You want to connect" ; 
                                     read tableName
-                                    echo "enter coulmn name : "
-                                    read colName 
-                                    awk -v colName="$colName"  -v tableName="$tableName" -F : '
-                                        BEGIN {
-                                            print "************************************"
-                                            print "select", colName ,"from" , tableName 
-                                            dataF=-1;  
-                                        } 
-                                        {
-                                            if(colName=="*"){
-                                                print $0     
-                                            }
-                                            else{
-                                                if(NR==1){
-                                                    i=1; 
-                                                    while(i<=NF) {
-                                                        if(colName==$i){
-                                                            print $i;
-                                                            dataF=i;
-                                                            break;
-                                                        }
-                                                        i++
-                                                    } 
-                                                }
-                                                else{
-                                                    
-                                                    i=1; 
-                                                    while(i<=NF) {
-                                                        if(dataF==i){
-                                                            print $i ; 
-                                                        }
-                                                        i++
-                                                    } 
-                                                }
-                                            } 
-                                        } 
-                                        END {
-                                                print "************************************"
-                                            }
-                                    ' $tableName
-                                    echo end of awk
+                                    awk '{
+                                        print $1
+                                    }' $tableName.csv
                                     break
                                 ;;
-                                disconnect)
-                                    disconnect=true
-                                    cd .. ;
-                                    echo disconnected
-                                    break
+                                deleteFromTable)
+                                        echo "This is all tables"
+                                        ls $PWD
+                                        read -p "Enter Table You Want to delete From : " tableName;
+                                        
+                                    if [[ -f $tableName ]] 
+                                    then
+                                        read -p "Enter the id of col you want do delete :"  recordId ;
+                                        regex='^[0-9]+$'
+                                        if ! [[ $recordId =~ $regex ]]
+                                        then
+                                            echo "error Please Enter a number not a string"
+                                        elif ! [[ $recordId =~ [`awk 'BEGIN{FS="|" ; ORS=" "}{if(NR != 1)print $1}' $tableName`] ]]
+                                        then
+                                            echo "Record Not found!"
+                                        else
+                                            sed -i /^$recordId/d  $tableName
+                                            echo "Record deleted succefully!"
+                                        fi    
+                                    else
+                                        echo "Sorry table is not exist"
+                                    fi 
+                                        break
+                                    ;;
+                                    disconnect)
+                                        disconnect=true
+                                        cd .. ;
+                                        echo disconnected
+                                        break
                                 ;;
                             esac
                         done
