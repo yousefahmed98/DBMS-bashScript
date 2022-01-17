@@ -128,12 +128,47 @@ do
                                         echo "Sorry table is not exist"
                                     fi 
                                         break
-                                    ;;
-                                    disconnect)
-                                        disconnect=true
-                                        cd .. ;
-                                        echo disconnected
-                                        break
+                                ;;
+                                isnertIntoTable)
+
+                                    
+                                    id=-1
+                                    echo "Please Enter table Name" ; 
+                                    read tableName
+                                    colsNum=`awk -F : 'END{print NF}' $tableName` #get the number of the cols
+                                    id=`awk -F : 'END{ print $1 }' $tableName` #get the id 
+                                    id=$(($id+1))
+                                    j=1
+                                    Error=false
+                                    for (( i=2; i<=$(($colsNum)); i++ )) do
+                                        colType=$(awk 'BEGIN{FS=":"}{ if(NR==1)print $'$i';}' .$tableName)
+                                        echo enter value of $(awk 'BEGIN{FS=":"}{ if(NR==1)print $'$i';}' $tableName) ,type=$colType
+                                        read value
+                                        if [[  $colType == "int" ]] ; then
+                                            if [[ ! $value =~ ^[0-9]+$ ]] ; then
+                                                echo "((((wrong dataType))))"
+                                                Error=true
+                                                break
+                                            fi
+                                        fi
+                                        row+=($value)
+                                        j=$(($j+1))
+                                    done 
+                                    if [ $Error = false ] ;then
+                                        echo -n $id >> $tableName
+                                        for element in "${row[@]}"
+                                        do
+                                        : 
+                                            echo -n :$element >> $tableName
+                                        done
+                                    fi
+                                    break
+                                    
+                                ;;
+                                disconnect)
+                                    disconnect=true
+                                    echo disconnected
+                                    break
                                 ;;
                             esac
                         done
@@ -183,3 +218,4 @@ do
         break
     fi
 done
+
