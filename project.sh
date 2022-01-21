@@ -100,7 +100,6 @@ do
                                     read tableName
                                     if [[ -f $tableName ]]
                                     then
-                                    printf "\n">>$tableName;  #to insert into a newLine  
                                     echo "enter coulmn name : "
                                     read colName 
                                     awk -v colName="$colName"  -v tableName="$tableName" -F : '
@@ -172,14 +171,14 @@ do
                                         break
                                 ;;
                                 insertIntoTable)
-
-                                    
+                                    echo "This is all tables"
+                                    ls $PWD
                                     id=-1
                                     echo "Please Enter table Name" ; 
                                     read tableName
                                     if [[ -f $tableName ]]
                                     then
-                                     printf "\n">>$tableName;
+                                    printf "\n">>$tableName;  #to insert into a newLine
                                     colsNum=`awk -F : 'END{print NF}' $tableName` #get the number of the cols
                                     id=`awk -F : 'END{ print $1 }' $tableName` #get the id 
                                     id=$(($id+1))
