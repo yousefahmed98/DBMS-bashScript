@@ -100,7 +100,7 @@ do
                                     read tableName
                                     if [[ -f $tableName ]]
                                     then
-                                        select choice3 in "ByColumn" "ById"
+                                        select choice3 in "ByColumn" "ById" "exit"
                                         do
                                             case $choice3 in
                                                 ByColumn)
@@ -145,6 +145,7 @@ do
                                                             }
                                                     ' $tableName
                                                     echo end of Select
+                                                    break
                                                 ;;
                                                 ById)
                                                     read -p "Enter the id of col :"  recordId ;
@@ -152,17 +153,16 @@ do
                                                     if ! [[ $recordId =~ $regex ]]
                                                     then
                                                         echo "error Please Enter a number not a string"
-                                                    elif ! [[ $recordId =~ [`awk 'BEGIN{FS="|" ; ORS=" "}{if(NR != 1)print $1}' $tableName`] ]]
+                                                    elif ! [[ $recordId =~ [`awk 'BEGIN{FS=":" ; ORS=" "}{if(NR != 1)print $1}' $tableName`] ]]
                                                     then
                                                         echo "Record Not found!"
                                                     else
-                                                    #  echo   sed '/^$recordId/' $tableName
-                                                      #   colType=$(awk 'BEGIN{FS=":"}{ if(NR==1)print $'$i';}' .$tableName)
-                                                     # awk -v colName="$colName"  -v tableName="$tableName" -F : '
-                                                    #awk '/^'$recordId'/{print}'
-                                                    awk -v recordId="$recordId" '/^recordId/{print}'
+                                                        echo "select * from $tableName where id = $recordId"
+                                                        awk /^"$recordId"/{print} $tableName
                                                     fi
+                                                    break
                                                 ;;
+                                               
                                                 esac
                                             done
                                     else
