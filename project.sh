@@ -244,6 +244,7 @@ do
                                     
                                 ;;
                                 disconnect)
+                                    cd ..
                                     disconnect=true
                                     echo disconnected
                                     break
