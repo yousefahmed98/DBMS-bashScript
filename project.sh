@@ -99,74 +99,74 @@ do
                                     echo "Please Enter table Name" ; 
                                     read tableName
                                     if [[ -f $tableName ]]
-                                    then
-                                        select choice3 in "ByColumn" "ById" "exit"
-                                        do
-                                            case $choice3 in
-                                                ByColumn)
-                                                    echo "enter coulmn name : "
-                                                    read colName 
-                                                    awk -v colName="$colName"  -v tableName="$tableName" -F : '
-                                                        BEGIN {
-                                                            print "************************************"
-                                                            print "select", colName ,"from" , tableName 
-                                                            dataF=-1;  
-                                                        } 
-                                                        {
-                                                            if(colName=="*"){
-                                                                print $0     
-                                                            }
-                                                            else{
-                                                                if(NR==1){
-                                                                    i=1; 
-                                                                    while(i<=NF) {
-                                                                        if(colName==$i){
-                                                                            print $i;
-                                                                            dataF=i;
-                                                                            break;
-                                                                        }
-                                                                        i++
-                                                                    } 
+                                        then
+                                            select choice3 in "ByColumn" "ById" "exit"
+                                            do
+                                                case $choice3 in
+                                                    ByColumn)
+                                                        echo "enter coulmn name : "
+                                                        read colName 
+                                                        awk -v colName="$colName"  -v tableName="$tableName" -F : '
+                                                            BEGIN {
+                                                                print "************************************"
+                                                                print "select", colName ,"from" , tableName 
+                                                                dataF=-1;  
+                                                            } 
+                                                            {
+                                                                if(colName=="*"){
+                                                                    print $0     
                                                                 }
                                                                 else{
-                                                                    
-                                                                    i=1; 
-                                                                    while(i<=NF) {
-                                                                        if(dataF==i){
-                                                                            print $i ; 
-                                                                        }
-                                                                        i++
-                                                                    } 
-                                                                }
+                                                                    if(NR==1){
+                                                                        i=1; 
+                                                                        while(i<=NF) {
+                                                                            if(colName==$i){
+                                                                                print $i;
+                                                                                dataF=i;
+                                                                                break;
+                                                                            }
+                                                                            i++
+                                                                        } 
+                                                                    }
+                                                                    else{
+                                                                        
+                                                                        i=1; 
+                                                                        while(i<=NF) {
+                                                                            if(dataF==i){
+                                                                                print $i ; 
+                                                                            }
+                                                                            i++
+                                                                        } 
+                                                                    }
+                                                                } 
                                                             } 
-                                                        } 
-                                                        END {
-                                                                print "************************************"
-                                                            }
-                                                    ' $tableName
-                                                    echo end of Select
-                                                    break
-                                                ;;
-                                                ById)
-                                                    read -p "Enter the id of col :"  recordId ;
-                                                    regex='^[0-9]+$'
-                                                    if ! [[ $recordId =~ $regex ]]
-                                                    then
-                                                        echo "error Please Enter a number not a string"
-                                                    elif ! [[ $recordId =~ [`awk 'BEGIN{FS=":" ; ORS=" "}{if(NR != 1)print $1}' $tableName`] ]]
-                                                    then
-                                                        echo "Record Not found!"
-                                                    else
-                                                        echo "select * from $tableName where id = $recordId"
-                                                        awk /^"$recordId"/{print} $tableName
-                                                    fi
-                                                    break
-                                                ;;
-                                               
+                                                            END {
+                                                                    print "************************************"
+                                                                }
+                                                        ' $tableName
+                                                        echo end of Select
+                                                        break
+                                                    ;;
+                                                    ById)
+                                                        read -p "Enter the id of col :"  recordId ;
+                                                        regex='^[0-9]+$'
+                                                        if ! [[ $recordId =~ $regex ]]
+                                                        then
+                                                            echo "error Please Enter a number not a string"
+                                                        elif ! [[ $recordId =~ [`awk 'BEGIN{FS=":" ; ORS=" "}{if(NR != 1)print $1}' $tableName`] ]]
+                                                        then
+                                                            echo "Record Not found!"
+                                                        else
+                                                            echo "select * from $tableName where id = $recordId"
+                                                            awk /^"$recordId"/{print} $tableName
+                                                        fi
+                                                        break
+                                                    ;;
+                                                    exit);;
                                                 esac
                                             done
                                     else
-                                    echo "table dosent exist"
+                                        echo "table dosent exist"
                                     fi
                                     break
                                 ;;
