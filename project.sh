@@ -100,47 +100,71 @@ do
                                     read tableName
                                     if [[ -f $tableName ]]
                                     then
-                                    echo "enter coulmn name : "
-                                    read colName 
-                                    awk -v colName="$colName"  -v tableName="$tableName" -F : '
-                                        BEGIN {
-                                            print "************************************"
-                                            print "select", colName ,"from" , tableName 
-                                            dataF=-1;  
-                                        } 
-                                        {
-                                            if(colName=="*"){
-                                                print $0     
-                                            }
-                                            else{
-                                                if(NR==1){
-                                                    i=1; 
-                                                    while(i<=NF) {
-                                                        if(colName==$i){
-                                                            print $i;
-                                                            dataF=i;
-                                                            break;
-                                                        }
-                                                        i++
-                                                    } 
-                                                }
-                                                else{
-                                                    
-                                                    i=1; 
-                                                    while(i<=NF) {
-                                                        if(dataF==i){
-                                                            print $i ; 
-                                                        }
-                                                        i++
-                                                    } 
-                                                }
-                                            } 
-                                        } 
-                                        END {
-                                                print "************************************"
-                                            }
-                                    ' $tableName
-                                    echo end of Select
+                                        select choice3 in "ByColumn" "ById"
+                                        do
+                                            case $choice3 in
+                                                ByColumn)
+                                                    echo "enter coulmn name : "
+                                                    read colName 
+                                                    awk -v colName="$colName"  -v tableName="$tableName" -F : '
+                                                        BEGIN {
+                                                            print "************************************"
+                                                            print "select", colName ,"from" , tableName 
+                                                            dataF=-1;  
+                                                        } 
+                                                        {
+                                                            if(colName=="*"){
+                                                                print $0     
+                                                            }
+                                                            else{
+                                                                if(NR==1){
+                                                                    i=1; 
+                                                                    while(i<=NF) {
+                                                                        if(colName==$i){
+                                                                            print $i;
+                                                                            dataF=i;
+                                                                            break;
+                                                                        }
+                                                                        i++
+                                                                    } 
+                                                                }
+                                                                else{
+                                                                    
+                                                                    i=1; 
+                                                                    while(i<=NF) {
+                                                                        if(dataF==i){
+                                                                            print $i ; 
+                                                                        }
+                                                                        i++
+                                                                    } 
+                                                                }
+                                                            } 
+                                                        } 
+                                                        END {
+                                                                print "************************************"
+                                                            }
+                                                    ' $tableName
+                                                    echo end of Select
+                                                ;;
+                                                ById)
+                                                    read -p "Enter the id of col :"  recordId ;
+                                                    regex='^[0-9]+$'
+                                                    if ! [[ $recordId =~ $regex ]]
+                                                    then
+                                                        echo "error Please Enter a number not a string"
+                                                    elif ! [[ $recordId =~ [`awk 'BEGIN{FS="|" ; ORS=" "}{if(NR != 1)print $1}' $tableName`] ]]
+                                                    then
+                                                        echo "Record Not found!"
+                                                    else
+                                                    #  echo   sed '/^$recordId/' $tableName
+                                                      #   colType=$(awk 'BEGIN{FS=":"}{ if(NR==1)print $'$i';}' .$tableName)
+                                                     # awk -v colName="$colName"  -v tableName="$tableName" -F : '
+                                                    #awk '/^'$recordId'/{print}'
+                                                    awk -v recordId="$recordId" '/^recordId/{print}'
+                                                    fi
+                                                ;;
+                                                esac
+                                            done
                                     else
                                     echo "table dosent exist"
                                     fi
@@ -158,11 +182,11 @@ do
                                         if ! [[ $recordId =~ $regex ]]
                                         then
                                             echo "error Please Enter a number not a string"
-                                        elif ! [[ $recordId =~ [`awk 'BEGIN{FS="|" ; ORS=" "}{if(NR != 1)print $1}' $tableName`] ]]
+                                        elif ! [[ $recordId =~ [`awk 'BEGIN{FS=":" ; ORS=" "}{if(NR != 1)print $1}' $tableName`] ]]
                                         then
                                             echo "Record Not found!"
                                         else
-                                            sed -i /^$recordId/d  $tableName
+                                            sed -i  /^$recordId/d  $tableName
                                             echo "Record deleted succefully!"
                                         fi    
                                     else
@@ -178,10 +202,17 @@ do
                                     read tableName
                                     if [[ -f $tableName ]]
                                     then
+                                    id=0
+                                    row=()
                                     printf "\n">>$tableName;  #to insert into a newLine
                                     colsNum=`awk -F : 'END{print NF}' $tableName` #get the number of the cols
-                                    id=`awk -F : 'END{ print $1 }' $tableName` #get the id 
+                                    id=`awk -F : 'END{ print $1 }' $tableName` #get the id
+                                    if [[ $id == "id" ]]
+                                    then
+                                    id=0
+                                    else
                                     id=$(($id+1))
+                                    fi
                                     j=1
                                     Error=false
                                     for (( i=2; i<=$(($colsNum)); i++ )) do
