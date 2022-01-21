@@ -65,10 +65,6 @@ do
                                                         echo -n ':int' >> .$Table
                                                         echo -n :$colName >> $Table
                                                     ;;
-                                                    3)
-                                                        echo -n ':boolen' >> .$Table
-                                                        echo -n :$colName >> $Table
-                                                    ;;
                                                     *)
                                                         echo "unknown datatype"
                                                         i=$i-1
