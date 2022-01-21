@@ -32,7 +32,7 @@ do
                     disconnect=false
                     while true
                     do  
-                        select choice2 in "createTable" "listTable" "dropTable" "selectfromTable" "isnertIntoTable" "deleteFromTable" "disconnect"
+                        select choice2 in "createTable" "listTable" "dropTable" "selectfromTable" "insertIntoTable" "deleteFromTable" "disconnect"
                         do 
                             case $choice2 in 
                                 createTable)
@@ -97,9 +97,11 @@ do
                                     fi 
                                     break
                                 ;;
-                                sselectfromTable)
+                                selectfromTable)
                                     echo "Please Enter table Name" ; 
                                     read tableName
+                                    if [[ -f $tableName ]]
+                                    then
                                     echo "enter coulmn name : "
                                     read colName 
                                     awk -v colName="$colName"  -v tableName="$tableName" -F : '
@@ -140,7 +142,10 @@ do
                                                 print "************************************"
                                             }
                                     ' $tableName
-                                    echo end of awk
+                                    echo end of Select
+                                    else
+                                    echo "table dosent exist"
+                                    fi
                                     break
                                 ;;
                                 deleteFromTable)
@@ -167,12 +172,14 @@ do
                                     fi 
                                         break
                                 ;;
-                                isnertIntoTable)
+                                insertIntoTable)
 
                                     
                                     id=-1
                                     echo "Please Enter table Name" ; 
                                     read tableName
+                                    if [[ -f $tableName ]]
+                                    then
                                     colsNum=`awk -F : 'END{print NF}' $tableName` #get the number of the cols
                                     id=`awk -F : 'END{ print $1 }' $tableName` #get the id 
                                     id=$(($id+1))
@@ -199,6 +206,9 @@ do
                                         : 
                                             echo -n :$element >> $tableName
                                         done
+                                    fi
+                                    else
+                                            echo "table dosen't exit"
                                     fi
                                     break
                                     
