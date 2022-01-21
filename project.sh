@@ -94,10 +94,13 @@ do
                                     break
                                 ;;
                                 selectfromTable)
+                                    echo "This is all tables"
+                                    ls $PWD
                                     echo "Please Enter table Name" ; 
                                     read tableName
                                     if [[ -f $tableName ]]
                                     then
+                                    printf "\n">>$tableName;  #to insert into a newLine  
                                     echo "enter coulmn name : "
                                     read colName 
                                     awk -v colName="$colName"  -v tableName="$tableName" -F : '
