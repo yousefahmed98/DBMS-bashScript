@@ -54,7 +54,7 @@ do
                                             for (( i=1; i<=$fnumber; i++ ))
                                             do
                                                 read -p "Enter column No.$i name : " colName;
-                                                echo "1) string 2) int 3) boolen "
+                                                echo "1)string  2)int"
                                                 read -p "Enter column datatype :" coltype;
                                                 case $coltype in
                                                     1)
@@ -176,6 +176,7 @@ do
                                     read tableName
                                     if [[ -f $tableName ]]
                                     then
+                                     printf "\n">>$tableName;
                                     colsNum=`awk -F : 'END{print NF}' $tableName` #get the number of the cols
                                     id=`awk -F : 'END{ print $1 }' $tableName` #get the id 
                                     id=$(($id+1))
