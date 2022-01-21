@@ -94,6 +94,8 @@ do
                                     break
                                 ;;
                                 selectfromTable)
+                                    echo "This is all tables"
+                                    ls $PWD
                                     echo "Please Enter table Name" ; 
                                     read tableName
                                     if [[ -f $tableName ]]
