@@ -72,7 +72,9 @@ do
                                                 esac 
                                             done
                                         fi 
-                                        echo "$Table has been created Succefully..."
+                                        echo "$Table has been created Succefully"
+                                        echo "And The First column is id: and it's the PRIMARY KEY to table"
+                                        echo "Starts with 0 and increament by automatically"
                                     fi 
                                     break 
                                 ;;
