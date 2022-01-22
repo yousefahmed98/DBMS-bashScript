@@ -32,7 +32,7 @@ do
                     disconnect=false
                     while true
                     do  
-                        select choice2 in "createTable" "listTable" "dropTable" "selectfromTable" "isnertIntoTable" "deleteFromTable" "disconnect"
+                        select choice2 in "createTable" "listTable" "dropTable" "selectfromTable" "insertIntoTable" "deleteFromTable" "disconnect"
                         do 
                             case $choice2 in 
                                 createTable)
@@ -54,7 +54,7 @@ do
                                             for (( i=1; i<=$fnumber; i++ ))
                                             do
                                                 read -p "Enter column No.$i name : " colName;
-                                                echo "1) string 2) int 3) boolen "
+                                                echo "1)string  2)int"
                                                 read -p "Enter column datatype :" coltype;
                                                 case $coltype in
                                                     1)
@@ -65,10 +65,6 @@ do
                                                         echo -n ':int' >> .$Table
                                                         echo -n :$colName >> $Table
                                                     ;;
-                                                    3)
-                                                        echo -n ':boolen' >> .$Table
-                                                        echo -n :$colName >> $Table
-                                                    ;;
                                                     *)
                                                         echo "unknown datatype"
                                                         i=$i-1
@@ -76,7 +72,9 @@ do
                                                 esac 
                                             done
                                         fi 
-                                        echo "$Table has been created Succefully..."
+                                        echo "$Table has been created Succefully"
+                                        echo "And The First column is id: and it's the PRIMARY KEY to table"
+                                        echo "Starts with 0 and increament by automatically"
                                     fi 
                                     break 
                                 ;;
@@ -98,16 +96,158 @@ do
                                     break
                                 ;;
                                 selectfromTable)
-                                    echo "Please Enter DataBase Name You want to connect" ; 
+                                    echo "This is all tables"
+                                    ls $PWD
+                                    echo "Please Enter table Name" ; 
                                     read tableName
-                                    awk '{
-                                        print $1
-                                    }' $tableName.csv
+                                    if [[ -f $tableName ]]
+                                        then
+                                            select choice3 in "ByColumn" "ById" "exit"
+                                            do
+                                                case $choice3 in
+                                                    ByColumn)
+                                                        echo "enter coulmn name : "
+                                                        read colName 
+                                                        awk -v colName="$colName"  -v tableName="$tableName" -F : '
+                                                            BEGIN {
+                                                                print "************************************"
+                                                                print "select", colName ,"from" , tableName 
+                                                                dataF=-1;  
+                                                            } 
+                                                            {
+                                                                if(colName=="*"){
+                                                                    print $0     
+                                                                }
+                                                                else{
+                                                                    if(NR==1){
+                                                                        i=1; 
+                                                                        while(i<=NF) {
+                                                                            if(colName==$i){
+                                                                                print $i;
+                                                                                dataF=i;
+                                                                                break;
+                                                                            }
+                                                                            i++
+                                                                        } 
+                                                                    }
+                                                                    else{
+                                                                        
+                                                                        i=1; 
+                                                                        while(i<=NF) {
+                                                                            if(dataF==i){
+                                                                                print $i ; 
+                                                                            }
+                                                                            i++
+                                                                        } 
+                                                                    }
+                                                                } 
+                                                            } 
+                                                            END {
+                                                                    print "************************************"
+                                                                }
+                                                        ' $tableName
+                                                        echo end of Select
+                                                        break
+                                                    ;;
+                                                    ById)
+                                                        read -p "Enter the id of col :"  recordId ;
+                                                        regex='^[0-9]+$'
+                                                        if ! [[ $recordId =~ $regex ]]
+                                                        then
+                                                            echo "error Please Enter a number not a string"
+                                                        elif ! [[ $recordId =~ [`awk 'BEGIN{FS=":" ; ORS=" "}{if(NR != 1)print $1}' $tableName`] ]]
+                                                        then
+                                                            echo "Record Not found!"
+                                                        else
+                                                            echo "select * from $tableName where id = $recordId"
+                                                            awk /^"$recordId"/{print} $tableName
+                                                        fi
+                                                        break
+                                                    ;;
+                                                    exit);;
+                                                esac
+                                            done
+                                    else
+                                        echo "table dosent exist"
+                                    fi
                                     break
                                 ;;
+                                deleteFromTable)
+                                        echo "This is all tables"
+                                        ls $PWD
+                                        read -p "Enter Table You Want to delete From : " tableName;
+                                        
+                                    if [[ -f $tableName ]] 
+                                    then
+                                        read -p "Enter the id of col you want do delete :"  recordId ;
+                                        regex='^[0-9]+$'
+                                        if ! [[ $recordId =~ $regex ]]
+                                        then
+                                            echo "error Please Enter a number not a string"
+                                        elif ! [[ $recordId =~ [`awk 'BEGIN{FS=":" ; ORS=" "}{if(NR != 1)print $1}' $tableName`] ]]
+                                        then
+                                            echo "Record Not found!"
+                                        else
+                                            sed -i  /^$recordId/d  $tableName
+                                            echo "Record deleted succefully!"
+                                        fi    
+                                    else
+                                        echo "Sorry table is not exist"
+                                    fi 
+                                        break
+                                ;;
+                                insertIntoTable)
+                                    echo "This is all tables"
+                                    ls $PWD
+                                    id=-1
+                                    echo "Please Enter table Name" ; 
+                                    read tableName
+                                    if [[ -f $tableName ]]
+                                    then
+                                    id=0
+                                    row=()
+                                    printf "\n">>$tableName;  #to insert into a newLine
+                                    colsNum=`awk -F : 'END{print NF}' $tableName` #get the number of the cols
+                                    id=`awk -F : 'END{ print $1 }' $tableName` #get the id
+                                    if [[ $id == "id" ]]
+                                    then
+                                    id=0
+                                    else
+                                    id=$(($id+1))
+                                    fi
+                                    j=1
+                                    Error=false
+                                    for (( i=2; i<=$(($colsNum)); i++ )) do
+                                        colType=$(awk 'BEGIN{FS=":"}{ if(NR==1)print $'$i';}' .$tableName)
+                                        echo enter value of $(awk 'BEGIN{FS=":"}{ if(NR==1)print $'$i';}' $tableName) ,type=$colType
+                                        read value
+                                        if [[  $colType == "int" ]] ; then
+                                            if [[ ! $value =~ ^[0-9]+$ ]] ; then
+                                                echo "((((wrong dataType))))"
+                                                Error=true
+                                                break
+                                            fi
+                                        fi
+                                        row+=($value)
+                                        j=$(($j+1))
+                                    done 
+                                    if [ $Error = false ] ;then
+                                        echo -n $id >> $tableName
+                                        for element in "${row[@]}"
+                                        do
+                                        : 
+                                            echo -n :$element >> $tableName
+                                        done
+                                    fi
+                                    else
+                                            echo "table dosen't exit"
+                                    fi
+                                    break
+                                    
+                                ;;
                                 disconnect)
+                                    cd ..
                                     disconnect=true
-                                    cd .. ;
                                     echo disconnected
                                     break
                                 ;;
@@ -159,3 +299,4 @@ do
         break
     fi
 done
+
